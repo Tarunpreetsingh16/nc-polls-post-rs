@@ -15,7 +15,7 @@ data class PollOption(
     val id: Int?,
 
     @Column(name = "postId", nullable = false)
-    val postId: Int?,
+    var postId: Int?,
 
     @Column(name = "pollOption", nullable = false)
     val pollOption: String?

@@ -3,8 +3,9 @@ package com.neighborhood.connect.pollspostsrs.entities
 import jakarta.persistence.*
 import lombok.Data
 import lombok.NoArgsConstructor
-import org.springframework.data.geo.Point
 import java.sql.Timestamp
+
+import java.time.Instant
 
 @Entity
 @Data
@@ -17,19 +18,22 @@ data class Post(
     val id: Int?,
 
     @Column(name = "timestamp", nullable = false)
-    val timestamp: Timestamp?,
+    val timestamp: Timestamp? = Timestamp.from(Instant.now()),
 
     @Column(name = "archived", nullable = false)
-    val archived: Boolean?,
+    val archived: Boolean? = false,
 
     @Column(name = "postalCode", nullable = false)
     val postalCode: String?,
 
     @Column(name = "deleted", nullable = false)
-    val deleted: Boolean?,
+    val deleted: Boolean? = false,
 
-    @Column(name = "coordinate", nullable = false)
-    val coordinate: Point?,
+    @Column(name = "longitude", nullable = false)
+    val longitude: Float?,
+
+    @Column(name = "latitude", nullable = false)
+    val latitude: Float?,
 
     @Column(name = "city", nullable = false)
     val city: String?,
