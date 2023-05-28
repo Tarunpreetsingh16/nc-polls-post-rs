@@ -1,7 +1,8 @@
 package com.neighborhood.connect.pollspostsrs.service
 
+import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
 import org.springframework.http.ResponseEntity
 
 interface IPollsPostsRsService {
-    fun createPost(): ResponseEntity<Any>
+    fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any>
 }
