@@ -52,4 +52,7 @@ data class Post(
 
     @Column(name = "postTypeId", nullable = false)
     val postTypeId: Int?,
-)
+) {
+    constructor(): this(null, null, null, null, null, null,null
+    ,null, null, null, null, null, null)
+}

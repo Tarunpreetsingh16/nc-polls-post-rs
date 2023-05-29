@@ -18,4 +18,8 @@ class PollsPostsRsController(
     override fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any> {
         return pollsPostsRsServiceImpl.createPost(createPostRequest)
     }
+
+    override fun deletePost(postId: Int): ResponseEntity<Any> {
+        return pollsPostsRsServiceImpl.deletePost(postId)
+    }
 }
