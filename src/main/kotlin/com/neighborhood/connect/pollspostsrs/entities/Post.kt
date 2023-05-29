@@ -30,10 +30,10 @@ data class Post(
     val deleted: Boolean? = false,
 
     @Column(name = "longitude", nullable = false)
-    val longitude: Float?,
+    val longitude: Double?,
 
     @Column(name = "latitude", nullable = false)
-    val latitude: Float?,
+    val latitude: Double?,
 
     @Column(name = "city", nullable = false)
     val city: String?,
@@ -42,7 +42,7 @@ data class Post(
     val anonymous: Boolean?,
 
     @Column(name = "userCredentialId", nullable = false)
-    val userCredentialId: Int?,
+    var userCredentialId: Int?,
 
     @Column(name = "title", nullable = false)
     val title: String?,
