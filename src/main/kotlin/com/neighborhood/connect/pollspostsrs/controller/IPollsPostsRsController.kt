@@ -2,7 +2,9 @@ package com.neighborhood.connect.pollspostsrs.controller
 
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
@@ -12,4 +14,7 @@ interface IPollsPostsRsController {
 
     @PostMapping("", produces = ["application/json"])
     fun createPost(@RequestBody createPostRequest: CreatePostRequest): ResponseEntity<Any>
+
+    @DeleteMapping("/{postId}", produces = ["application/json"])
+    fun deletePost(@PathVariable(name = "postId") postId: Int): ResponseEntity<Any>
 }
