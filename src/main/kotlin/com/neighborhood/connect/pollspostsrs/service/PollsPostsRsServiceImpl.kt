@@ -1,5 +1,7 @@
 package com.neighborhood.connect.pollspostsrs.service
 
+import com.neighborhood.connect.jwtlib.model.CustomUserDetails
+import com.neighborhood.connect.pollspostsrs.config.SecurityConfig
 import com.neighborhood.connect.pollspostsrs.entities.PollOption
 import com.neighborhood.connect.pollspostsrs.entities.Post
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
@@ -7,6 +9,7 @@ import com.neighborhood.connect.pollspostsrs.service.db.PollOptionRepositoryServ
 import com.neighborhood.connect.pollspostsrs.service.db.PostRepositoryServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
@@ -19,9 +22,15 @@ class PollsPostsRsServiceImpl(
     @Transactional
     override fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any> {
         kotlin.runCatching {
-            val savedPost: Post = postRepositoryServiceImpl.createPost(createPostRequest.post)
+            val customerUserDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
+            val userCredentialId: Int? = customerUserDetails.getUserId()
+            val post = createPostRequest.post
+            post.userCredentialId = userCredentialId
+
+            val savedPost: Post = postRepositoryServiceImpl.createPost(post)
             val pollOptions: List<PollOption> = createPostRequest.pollOptions
-            pollOptions.forEach{pollOption ->
+
+            pollOptions.forEach{ pollOption ->
                 pollOption.postId = savedPost.id
             }
             pollOptionRepositoryServiceImpl.createOptions(pollOptions)
