@@ -4,4 +4,9 @@ import com.neighborhood.connect.pollspostsrs.entities.Post
 
 interface IPostRepositoryService {
     fun createPost(post: Post): Post
+    fun deletePost(postId: Int): Int
+
+    fun existsById(postId: Int): Boolean
+
+    fun isUserOwnerOfThePost(userId: Int, postId: Int): List<Post>
 }
