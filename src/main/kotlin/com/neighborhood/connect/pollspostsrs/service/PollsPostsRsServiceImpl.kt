@@ -1,7 +1,6 @@
 package com.neighborhood.connect.pollspostsrs.service
 
 import com.neighborhood.connect.jwtlib.model.CustomUserDetails
-import com.neighborhood.connect.pollspostsrs.config.SecurityConfig
 import com.neighborhood.connect.pollspostsrs.entities.PollOption
 import com.neighborhood.connect.pollspostsrs.entities.Post
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
@@ -36,14 +35,33 @@ class PollsPostsRsServiceImpl(
         }
     }
 
+    @Transactional
+    override fun deletePost(postId: Int): ResponseEntity<Any> {
+
+        if (!postRepositoryServiceImpl.existsById(postId)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Post does not exist")
+        }
+
+        if (postRepositoryServiceImpl.isUserOwnerOfThePost(getUserId() ?: -1, postId).isEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Account eligibility mismatch")
+        }
+
+        kotlin.runCatching {
+            val rowsAffected = postRepositoryServiceImpl.deletePost(postId)
+            return ResponseEntity.ok("{\"items_updated\": ${rowsAffected}}")
+        }.getOrElse {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
+        }
+    }
+
     fun getUserId(): Int? {
         val customerUserDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
-        return  customerUserDetails.getUserId()
+        return customerUserDetails.getUserId()
     }
 
     fun linkPostAndPollOptions(pollOptions: List<PollOption>, id: Int): List<PollOption> {
         val pollOptionslocal = pollOptions
-        pollOptionslocal.forEach{ pollOption ->
+        pollOptionslocal.forEach { pollOption ->
             pollOption.postId = id
         }
         return pollOptionslocal
