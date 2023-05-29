@@ -22,21 +22,30 @@ class PollsPostsRsServiceImpl(
     @Transactional
     override fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any> {
         kotlin.runCatching {
-            val customerUserDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
-            val userCredentialId: Int? = customerUserDetails.getUserId()
             val post = createPostRequest.post
-            post.userCredentialId = userCredentialId
+            post.userCredentialId = getUserId()
 
             val savedPost: Post = postRepositoryServiceImpl.createPost(post)
-            val pollOptions: List<PollOption> = createPostRequest.pollOptions
 
-            pollOptions.forEach{ pollOption ->
-                pollOption.postId = savedPost.id
-            }
+            val pollOptions = linkPostAndPollOptions(createPostRequest.pollOptions, savedPost.id!!)
+
             pollOptionRepositoryServiceImpl.createOptions(pollOptions)
             return ResponseEntity.ok(null)
         }.getOrElse {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
         }
+    }
+
+    fun getUserId(): Int? {
+        val customerUserDetails = SecurityContextHolder.getContext().authentication.principal as CustomUserDetails
+        return  customerUserDetails.getUserId()
+    }
+
+    fun linkPostAndPollOptions(pollOptions: List<PollOption>, id: Int): List<PollOption> {
+        val pollOptionslocal = pollOptions
+        pollOptionslocal.forEach{ pollOption ->
+            pollOption.postId = id
+        }
+        return pollOptionslocal
     }
 }
