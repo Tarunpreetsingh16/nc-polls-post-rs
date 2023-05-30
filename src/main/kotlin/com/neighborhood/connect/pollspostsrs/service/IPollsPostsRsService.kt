@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity
 interface IPollsPostsRsService {
     fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any>
     fun deletePost(postId: Int): ResponseEntity<Any>
+
+    fun getPosts(): ResponseEntity<Any>
 }

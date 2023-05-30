@@ -15,4 +15,14 @@ interface IPostRepository : JpaRepository<Post, Long> {
     fun deletePost(@Param("postId") postId: Int): Int
 
     fun findByIdAndUserCredentialId(postId: Int, userId: Int): List<Post>
+
+    @Modifying
+    @Query("SELECT new com.neighborhood.connect.pollspostsrs.entities.PostPollOptionAndVote(post, pollOption, pollOptionVote) " +
+            "FROM Post post " +
+            "LEFT JOIN PollOption pollOption " +
+            "ON post.id = pollOption.postId " +
+            "LEFT JOIN PollOptionVote pollOptionVote " +
+            "ON pollOption.id = pollOptionVote.pollOptionId " +
+            "WHERE post.userCredentialId = :userId")
+    fun getPostsWithOptionsAndVotes(userId: Int): List<Any>
 }
