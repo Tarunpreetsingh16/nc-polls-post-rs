@@ -86,19 +86,30 @@ class PollsPostsRsServiceImpl(
         val posts = HashMap<Int, Post>()
         val pollOptions = HashMap<Int, MutableList<PollOption>>()
         val pollOptionVotes = HashMap<Int, MutableList<PollOptionVote?>>()
+
+        // go through the data fetched from the database containing posts, polls options and option votes
         postsWithPollOptionsAndVotes.forEach {
             val postWithPollOptionAndVote = it as PostPollOptionAndVote
+
             val post = postWithPollOptionAndVote.post
             val pollOption = postWithPollOptionAndVote.pollOption
             val pollOptionVote = postWithPollOptionAndVote.pollOptionVote
+
+            //if the post has not been seen yet in the data
+            // add the post, add the option and its vote to the maps
             if (!posts.containsKey(post.id!!)) {
                 posts[post.id] = post
+                // If post was never seen in data, we could not have seen any option and vote too, so create new entry to the map
                 pollOptions[post.id] = mutableListOf(pollOption)
                 pollOptionVotes[pollOption.id!!] = mutableListOf(pollOptionVote)
             } else {
+                //if the post was traversed before means we do not have to create a new entry for post
+                // if we have traversed the option before we will find that in votes map as it is always done in the if block above,
+                // so we just need to update th vote list
                 if (pollOptionVotes.containsKey(pollOption.id!!)) {
                     pollOptionVotes[pollOption.id]?.add(pollOptionVote)
                 } else {
+                    //if we see a new option for the post, we add option and vote to their respective map
                     pollOptions[post.id]?.add(pollOption)
                     pollOptionVotes[pollOption.id] = mutableListOf(pollOptionVote)
                 }
@@ -107,17 +118,24 @@ class PollsPostsRsServiceImpl(
 
         val getPostsResponse = GetPostsResponse(mutableListOf())
 
+
+        // posts object contains all the posts fetched from the database
         posts.forEach { post ->
 
+            //add the post to the object as the post will not be repeated
             val postPollOptionsAndVotes = PostPollOptionsAndVotes(post.value, mutableListOf())
 
+            // go through the options linked to the post
             pollOptions[post.key]?.forEach { pollOption ->
+                // add the votes, linked to the option, to the object
                 postPollOptionsAndVotes.pollOptionAndVotes.add(
                     PollOptionAndVotes(pollOption, pollOptionVotes[pollOption.id]?.toList() ?: listOf())
                 )
             }
+
+            //add the post with options and votes to the response object
             getPostsResponse.postsWithPollOptionsAndVotes.add(postPollOptionsAndVotes)
         }
-        return  getPostsResponse
+        return getPostsResponse
     }
 }
