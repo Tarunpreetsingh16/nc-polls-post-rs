@@ -8,5 +8,7 @@ interface IPostRepositoryService {
 
     fun existsById(postId: Int): Boolean
 
-    fun isUserOwnerOfThePost(userId: Int, postId: Int): List<Post>
+    fun isUserOwnerOfThePost(userId: Int, postId: Int): Boolean
+
+    fun getPostsWithOptionsAndVotes(userId: Int): List<Any>
 }

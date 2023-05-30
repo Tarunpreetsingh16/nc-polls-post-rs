@@ -22,4 +22,8 @@ class PollsPostsRsController(
     override fun deletePost(postId: Int): ResponseEntity<Any> {
         return pollsPostsRsServiceImpl.deletePost(postId)
     }
+
+    override fun getPosts(): ResponseEntity<Any> {
+        return pollsPostsRsServiceImpl.getPosts()
+    }
 }
