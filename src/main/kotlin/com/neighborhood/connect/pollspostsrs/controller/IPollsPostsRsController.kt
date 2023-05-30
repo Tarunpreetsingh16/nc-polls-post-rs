@@ -17,4 +17,7 @@ interface IPollsPostsRsController {
 
     @DeleteMapping("/{postId}", produces = ["application/json"])
     fun deletePost(@PathVariable(name = "postId") postId: Int): ResponseEntity<Any>
+
+    @GetMapping("", produces = ["application/json"])
+    fun getPosts(): ResponseEntity<Any>
 }
