@@ -19,7 +19,11 @@ class PostRepositoryServiceImpl(private val postRepository: IPostRepository) :
         return postRepository.existsById(postId.toLong())
     }
 
-    override fun isUserOwnerOfThePost(userId: Int, postId: Int): List<Post> {
-        return postRepository.findByIdAndUserCredentialId(postId, userId)
+    override fun isUserOwnerOfThePost(userId: Int, postId: Int): Boolean {
+        return postRepository.findByIdAndUserCredentialId(postId, userId).isNotEmpty()
+    }
+
+    override fun getPostsWithOptionsAndVotes(userId: Int): List<Any> {
+        return postRepository.getPostsWithOptionsAndVotes(userId)
     }
 }
