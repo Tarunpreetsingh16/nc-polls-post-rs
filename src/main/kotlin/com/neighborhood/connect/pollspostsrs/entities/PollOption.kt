@@ -19,4 +19,6 @@ data class PollOption(
 
     @Column(name = "pollOption", nullable = false)
     val pollOption: String?
-)
+) {
+    constructor(): this(null, null, null)
+}
