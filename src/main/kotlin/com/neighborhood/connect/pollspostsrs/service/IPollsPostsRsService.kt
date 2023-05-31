@@ -1,6 +1,7 @@
 package com.neighborhood.connect.pollspostsrs.service
 
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
+import com.neighborhood.connect.pollspostsrs.models.GetPostsWithinRadiusRequest
 import org.springframework.http.ResponseEntity
 
 interface IPollsPostsRsService {
@@ -8,4 +9,6 @@ interface IPollsPostsRsService {
     fun deletePost(postId: Int): ResponseEntity<Any>
 
     fun getPosts(): ResponseEntity<Any>
+
+    fun getPostsWithinRadius(getPostsWithinRadiusRequest: GetPostsWithinRadiusRequest): ResponseEntity<Any>
 }

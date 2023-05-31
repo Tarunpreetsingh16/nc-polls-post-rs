@@ -10,5 +10,5 @@ interface IPostRepositoryService {
 
     fun isUserOwnerOfThePost(userId: Int, postId: Int): Boolean
 
-    fun getPostsWithOptionsAndVotes(userId: Int): List<Any>
+    fun getPostsWithOptionsAndVotes(userId: Int? = null): List<Any>
 }

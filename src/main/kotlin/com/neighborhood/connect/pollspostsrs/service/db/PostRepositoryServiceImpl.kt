@@ -23,7 +23,7 @@ class PostRepositoryServiceImpl(private val postRepository: IPostRepository) :
         return postRepository.findByIdAndUserCredentialId(postId, userId).isNotEmpty()
     }
 
-    override fun getPostsWithOptionsAndVotes(userId: Int): List<Any> {
+    override fun getPostsWithOptionsAndVotes(userId: Int?): List<Any> {
         return postRepository.getPostsWithOptionsAndVotes(userId)
     }
 }
