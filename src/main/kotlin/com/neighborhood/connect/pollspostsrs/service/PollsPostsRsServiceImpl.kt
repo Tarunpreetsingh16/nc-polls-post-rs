@@ -5,10 +5,7 @@ import com.neighborhood.connect.pollspostsrs.entities.PollOption
 import com.neighborhood.connect.pollspostsrs.entities.PollOptionVote
 import com.neighborhood.connect.pollspostsrs.entities.Post
 import com.neighborhood.connect.pollspostsrs.entities.PostPollOptionAndVote
-import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
-import com.neighborhood.connect.pollspostsrs.models.GetPostsResponse
-import com.neighborhood.connect.pollspostsrs.models.PollOptionAndVotes
-import com.neighborhood.connect.pollspostsrs.models.PostPollOptionsAndVotes
+import com.neighborhood.connect.pollspostsrs.models.*
 import com.neighborhood.connect.pollspostsrs.service.db.PollOptionRepositoryServiceImpl
 import com.neighborhood.connect.pollspostsrs.service.db.PostRepositoryServiceImpl
 import org.springframework.http.HttpStatus
@@ -17,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import kotlin.math.*
 
 @Service
 class PollsPostsRsServiceImpl(
@@ -64,6 +62,31 @@ class PollsPostsRsServiceImpl(
             val postsWithPollOptionsAndVotes = postRepositoryServiceImpl.getPostsWithOptionsAndVotes(getUserId() ?: -1)
 
             return ResponseEntity.ok(generateResponseForGetPosts(postsWithPollOptionsAndVotes))
+        }.getOrElse {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
+        }
+    }
+
+    override fun getPostsWithinRadius(getPostsWithinRadiusRequest: GetPostsWithinRadiusRequest): ResponseEntity<Any> {
+        kotlin.runCatching {
+            val postsWithPollOptionsAndVotes = postRepositoryServiceImpl.getPostsWithOptionsAndVotes()
+            val getPostsResponseWithinRadius = GetPostsResponse(mutableListOf())
+
+            generateResponseForGetPosts(postsWithPollOptionsAndVotes)
+                .postsWithPollOptionsAndVotes
+                .forEach {
+                    if (calculateDistance(
+                            getPostsWithinRadiusRequest.latitude,
+                            getPostsWithinRadiusRequest.longitude,
+                            it.post.latitude!!,
+                            it.post.longitude!!,
+                        ) <= getPostsWithinRadiusRequest.radius
+                    ) {
+                        getPostsResponseWithinRadius.postsWithPollOptionsAndVotes.add(it)
+                    }
+                }
+
+            return ResponseEntity.ok(getPostsResponseWithinRadius)
         }.getOrElse {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
         }
@@ -137,5 +160,20 @@ class PollsPostsRsServiceImpl(
             getPostsResponse.postsWithPollOptionsAndVotes.add(postPollOptionsAndVotes)
         }
         return getPostsResponse
+    }
+
+    fun calculateDistance(sourceLat: Double, sourceLong: Double, targetLat: Double, targetLong: Double): Double {
+        val sourceLatRad = Math.toRadians(sourceLat)
+        val sourceLongRad = Math.toRadians(sourceLong)
+        val targetLatRad = Math.toRadians(targetLat)
+        val targetLongRad = Math.toRadians(targetLong)
+
+        val diffLong = targetLongRad - sourceLongRad
+        val diffLat = targetLatRad - sourceLatRad
+
+        val a = sin(diffLat / 2).pow(2) + cos(sourceLatRad) * cos(targetLatRad) * sin(diffLong / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return 6371 * c // 6371 being the Earth Radius
     }
 }
