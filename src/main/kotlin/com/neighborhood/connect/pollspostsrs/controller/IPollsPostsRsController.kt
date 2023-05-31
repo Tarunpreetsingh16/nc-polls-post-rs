@@ -1,6 +1,7 @@
 package com.neighborhood.connect.pollspostsrs.controller
 
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
+import com.neighborhood.connect.pollspostsrs.models.GetPostsWithinRadiusRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,4 +21,7 @@ interface IPollsPostsRsController {
 
     @GetMapping("", produces = ["application/json"])
     fun getPosts(): ResponseEntity<Any>
+
+    @GetMapping("/postsWithinRadius", produces = ["application/json"])
+    fun getPostsWithinRadius(@RequestBody getPostsWithinRadiusRequest: GetPostsWithinRadiusRequest): ResponseEntity<Any>
 }
