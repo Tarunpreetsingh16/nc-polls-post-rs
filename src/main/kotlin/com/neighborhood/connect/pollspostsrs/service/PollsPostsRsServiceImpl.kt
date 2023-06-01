@@ -118,7 +118,7 @@ class PollsPostsRsServiceImpl(
 
             pollOptionVoteRepositoryServiceImpl.save(userVote)
 
-            // fetch the latest post's votes to return to the user
+            // fetch the post's updated votes to return to the user
             val postsWithPollOptionsAndVotes =
                 postRepositoryServiceImpl.getPostsWithOptionsAndVotes(postId = voteRequest.postId)
             return ResponseEntity.ok(generateResponseForGetPosts(postsWithPollOptionsAndVotes))
