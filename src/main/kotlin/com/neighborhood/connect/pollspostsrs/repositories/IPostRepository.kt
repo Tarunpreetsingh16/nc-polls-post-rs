@@ -24,7 +24,9 @@ interface IPostRepository : JpaRepository<Post, Long> {
                 "ON post.id = pollOption.postId " +
                 "LEFT JOIN PollOptionVote pollOptionVote " +
                 "ON pollOption.id = pollOptionVote.pollOptionId " +
-                "WHERE (:userId IS null OR post.userCredentialId = :userId) AND post.deleted = false"
+                "WHERE (:userId IS null OR post.userCredentialId = :userId) " +
+                "AND (:postId IS NULL OR post.id = :postId) " +
+                "AND post.deleted = false"
     )
-    fun getPostsWithOptionsAndVotes(userId: Int? = null): List<Any>
+    fun getPostsWithOptionsAndVotes(userId: Int?, postId: Int?): List<Any>
 }

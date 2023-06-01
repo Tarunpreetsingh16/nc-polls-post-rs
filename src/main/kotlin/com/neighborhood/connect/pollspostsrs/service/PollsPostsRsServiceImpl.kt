@@ -7,6 +7,7 @@ import com.neighborhood.connect.pollspostsrs.entities.Post
 import com.neighborhood.connect.pollspostsrs.entities.PostPollOptionAndVote
 import com.neighborhood.connect.pollspostsrs.models.*
 import com.neighborhood.connect.pollspostsrs.service.db.PollOptionRepositoryServiceImpl
+import com.neighborhood.connect.pollspostsrs.service.db.PollOptionVoteRepositoryServiceImpl
 import com.neighborhood.connect.pollspostsrs.service.db.PostRepositoryServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,7 +20,8 @@ import kotlin.math.*
 @Service
 class PollsPostsRsServiceImpl(
     private val postRepositoryServiceImpl: PostRepositoryServiceImpl,
-    private val pollOptionRepositoryServiceImpl: PollOptionRepositoryServiceImpl
+    private val pollOptionRepositoryServiceImpl: PollOptionRepositoryServiceImpl,
+    private val pollOptionVoteRepositoryServiceImpl: PollOptionVoteRepositoryServiceImpl
 ) : IPollsPostsRsService {
     @Transactional
     override fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any> {
@@ -87,6 +89,39 @@ class PollsPostsRsServiceImpl(
                 }
 
             return ResponseEntity.ok(getPostsResponseWithinRadius)
+        }.getOrElse {
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
+        }
+    }
+
+    override fun vote(voteRequest: VoteRequest): ResponseEntity<Any> {
+        if (!pollOptionRepositoryServiceImpl.arePostIdAndPollOptionIdLinked(voteRequest)) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Poll and Post ids mismatch")
+        }
+
+        kotlin.runCatching {
+            var userVote = pollOptionVoteRepositoryServiceImpl.getUserVoteForPost(getUserId() ?: -1, voteRequest.postId)
+
+            // if user has already voted for the post only update the poll option
+            if (userVote != null) {
+                userVote.pollOptionId = voteRequest.pollOptionId
+            } else {
+                // otherwise create a new vote
+                userVote = PollOptionVote(
+                    id = null,
+                    pollOptionId = voteRequest.pollOptionId,
+                    postId = voteRequest.postId,
+                    anonymousVote = voteRequest.anonymous,
+                    voterCredentialId = getUserId()
+                )
+            }
+
+            pollOptionVoteRepositoryServiceImpl.save(userVote)
+
+            // fetch the post's updated votes to return to the user
+            val postsWithPollOptionsAndVotes =
+                postRepositoryServiceImpl.getPostsWithOptionsAndVotes(postId = voteRequest.postId)
+            return ResponseEntity.ok(generateResponseForGetPosts(postsWithPollOptionsAndVotes))
         }.getOrElse {
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, it.message)
         }

@@ -15,14 +15,17 @@ data class PollOptionVote(
     val id: Int?,
 
     @Column(name = "pollOptionId", nullable = false)
-    val pollOptionId: Int?,
+    var pollOptionId: Int?,
 
     @Column(name = "voterCredentialId", nullable = false)
-    val voterCredentialId: Int?,
+    var voterCredentialId: Int?,
 
     @Column(name = "anonymousVote", nullable = false)
-    val anonymousVote: Int?,
+    var anonymousVote: Boolean?,
+
+    @Column(name = "postId", nullable = false)
+    var postId: Int?
 
 ) {
-    constructor(): this(null, null, null, null)
+    constructor(): this(null, null, null, null, null)
 }

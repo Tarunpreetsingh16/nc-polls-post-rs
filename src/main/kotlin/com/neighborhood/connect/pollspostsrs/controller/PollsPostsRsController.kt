@@ -2,6 +2,7 @@ package com.neighborhood.connect.pollspostsrs.controller
 
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
 import com.neighborhood.connect.pollspostsrs.models.GetPostsWithinRadiusRequest
+import com.neighborhood.connect.pollspostsrs.models.VoteRequest
 import com.neighborhood.connect.pollspostsrs.service.PollsPostsRsServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
@@ -30,5 +31,9 @@ class PollsPostsRsController(
 
     override fun getPostsWithinRadius(getPostsWithinRadiusRequest: GetPostsWithinRadiusRequest): ResponseEntity<Any> {
         return pollsPostsRsServiceImpl.getPostsWithinRadius(getPostsWithinRadiusRequest)
+    }
+
+    override fun vote(voteRequest: VoteRequest): ResponseEntity<Any> {
+        return pollsPostsRsServiceImpl.vote(voteRequest)
     }
 }
