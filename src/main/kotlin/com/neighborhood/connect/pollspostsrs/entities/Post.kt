@@ -23,9 +23,6 @@ data class Post(
     @Column(name = "archived", nullable = false)
     val archived: Boolean? = false,
 
-    @Column(name = "postalCode", nullable = false)
-    val postalCode: String?,
-
     @Column(name = "deleted", nullable = false)
     val deleted: Boolean? = false,
 
@@ -35,11 +32,8 @@ data class Post(
     @Column(name = "latitude", nullable = false)
     val latitude: Double?,
 
-    @Column(name = "city", nullable = false)
-    val city: String?,
-
     @Column(name = "anonymous", nullable = false)
-    val anonymous: Boolean?,
+    val anonymous: Boolean? = false,
 
     @Column(name = "userCredentialId", nullable = false)
     var userCredentialId: Int?,
@@ -54,5 +48,5 @@ data class Post(
     val postTypeId: Int?,
 ) {
     constructor(): this(null, null, null, null, null, null,null
-    ,null, null, null, null, null, null)
+    ,null, null, null, null)
 }
