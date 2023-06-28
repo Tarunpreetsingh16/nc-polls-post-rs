@@ -31,8 +31,8 @@ open class GenericValidator {
     fun isArrayListSizeZero(): GenericValidator {
         if (this.obj is ArrayList<*> && (this.obj as ArrayList<*>).isEmpty()) {
             val error = Error(
-                    id = 0,
-                    description = "Array cannot be empty"
+                    id = ErrorCode.EMPTY_ARRAY.errorCode,
+                    description = ErrorCode.EMPTY_ARRAY.errorDescription
             )
             addToFieldErrors(error)
             hasError = true

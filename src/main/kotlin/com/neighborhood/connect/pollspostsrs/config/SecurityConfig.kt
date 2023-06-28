@@ -27,7 +27,7 @@ class SecurityConfig(
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeHttpRequests()
-            .requestMatchers("/polls/heartbeat").permitAll()
+            .requestMatchers("/poll/heartbeat").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
