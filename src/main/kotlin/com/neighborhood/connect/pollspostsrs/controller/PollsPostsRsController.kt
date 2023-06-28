@@ -1,9 +1,11 @@
 package com.neighborhood.connect.pollspostsrs.controller
 
+import com.neighborhood.connect.errorhandlerlib.customExceptions.FieldsValidationException
 import com.neighborhood.connect.pollspostsrs.models.CreatePostRequest
 import com.neighborhood.connect.pollspostsrs.models.GetPostsWithinRadiusRequest
 import com.neighborhood.connect.pollspostsrs.models.VoteRequest
 import com.neighborhood.connect.pollspostsrs.service.PollsPostsRsServiceImpl
+import com.neighborhood.connect.pollspostsrs.validators.CreatePostRequestValidator
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,6 +20,10 @@ class PollsPostsRsController(
     }
 
     override fun createPost(createPostRequest: CreatePostRequest): ResponseEntity<Any> {
+        val createPostRequestValidationResult = CreatePostRequestValidator().validate(createPostRequest = createPostRequest)
+        if (createPostRequestValidationResult.errors.size > 0) {
+            throw FieldsValidationException(createPostRequestValidationResult)
+        }
         return pollsPostsRsServiceImpl.createPost(createPostRequest)
     }
 

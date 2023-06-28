@@ -21,7 +21,7 @@
         <jjwt.api.version>0.11.5</jjwt.api.version>
         <jjwt.impl.version>0.11.5</jjwt.impl.version>
         <jjwt.jackson.version>0.11.1</jjwt.jackson.version>
-        <error.handler.version>0.0.2</error.handler.version>
+        <error.handler.version>0.0.3</error.handler.version>
         <jwt.lib.version>0.0.5</jwt.lib.version>
     </properties>
 
